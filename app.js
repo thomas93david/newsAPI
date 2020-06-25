@@ -28,8 +28,8 @@ async function fetchAllCategories() {
     console.error(error);
   }
 }
-fetchAllCategories();
-fetchAllCategories();
+// fetchAllCategories();
+// fetchAllCategories();
 
 async function fetchAllLanguages() {
   const url = `${BASE_URL}/v1/available/languages?${KEY}`;
@@ -45,7 +45,7 @@ async function fetchAllLanguages() {
     console.error(error);
   }
 }
-fetchAllLanguages();
+// fetchAllLanguages();
 
 async function fetchAllRegions() {
   const url = `${BASE_URL}/v1/available/regions?${KEY}`;
@@ -62,7 +62,7 @@ async function fetchAllRegions() {
   }
 }
 
-fetchAllRegions();
+// fetchAllRegions();
 
 async function preFetchRestrictions() {
   try {
@@ -72,11 +72,14 @@ async function preFetchRestrictions() {
       fetchAllRegions(),
     ]);
 
-    categories.forEach((category) => {
+    categories.forEach((categories) => {
       $("#select-categories").append(
-        $(`<option value="${category.name}">${category.name}</option>`)
+        $(`<option value="${categories.name}">${categories.name}</option>`)
       );
     });
+    console.log(categories);
+    console.log(languages);
+    console.log(regions);
 
     languages.forEach((language) => {
       $("#select-language").append(

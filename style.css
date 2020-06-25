@@ -46,3 +46,8 @@ fieldset {
   height: 750px;
   width: 100%;
 }
+
+#news-app .results .result-card {
+  width: 100px;
+  height: 100px;
+}
