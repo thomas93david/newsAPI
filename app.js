@@ -6,7 +6,8 @@ async function fetchNewsArticles() {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
+    return data;
   } catch (error) {
     console.error(error);
   }
@@ -21,14 +22,13 @@ async function fetchAllCategories() {
   }
   try {
     const response = await fetch(url);
-    const { categories } = await response.json();
-    localStorage.setItem("categories", JSON.stringify(categories));
-    return categories;
+    const { news } = await response.json();
+    localStorage.setItem("categories", JSON.stringify(news));
+    return news;
   } catch (error) {
     console.error(error);
   }
 }
-// fetchAllCategories();
 // fetchAllCategories();
 
 async function fetchAllLanguages() {
@@ -38,9 +38,9 @@ async function fetchAllLanguages() {
   }
   try {
     const response = await fetch(url);
-    const { languages } = await response.json();
-    localStorage.setItem("languages", JSON.stringify(languages));
-    return languages;
+    const { news } = await response.json();
+    localStorage.setItem("languages", JSON.stringify(news));
+    return news;
   } catch (error) {
     console.error(error);
   }
@@ -54,9 +54,9 @@ async function fetchAllRegions() {
   }
   try {
     const response = await fetch(url);
-    const { regions } = await response.json();
-    localStorage.setItem("regions", JSON.stringify(regions));
-    return regions;
+    const { news } = await response.json();
+    localStorage.setItem("regions", JSON.stringify(news));
+    return news;
   } catch (error) {
     console.error(error);
   }
@@ -72,24 +72,26 @@ async function preFetchRestrictions() {
       fetchAllRegions(),
     ]);
 
+    // console.log(categories);
     categories.forEach((categories) => {
       $("#select-categories").append(
-        $(`<option value="${categories.name}">${categories.name}</option>`)
+        $(`<option value="${categories[1]}">${categories}</option>`)
       );
     });
-    console.log(categories);
-    console.log(languages);
-    console.log(regions);
 
-    languages.forEach((language) => {
+    const dialect = Object.entries(languages);
+    // console.log(dialect);
+    dialect.forEach((language) => {
       $("#select-language").append(
-        $(`<option value="${language.name}">${language.name}</option>`)
+        `<option value="${language[1]}">${language[0]}</option>`
       );
     });
 
-    regions.forEach((region) => {
+    const territory = Object.entries(regions);
+    // console.log(territory);
+    territory.forEach((region) => {
       $("#select-region").append(
-        $(`<option value="${region.name}">${region.name}</option>`)
+        $(`<option value="${region[1]}">${region[0]}</option>`)
       );
     });
   } catch (error) {
@@ -99,25 +101,49 @@ async function preFetchRestrictions() {
 
 preFetchRestrictions();
 
-function renderArticles(news) {
-  return $(".results").append(
-    $(` <div class="result-card">
-        <header>
-            <h2>${news.title}</h2>
-            <h3>${news.author}</h3>
-            <p> ${news.published}</p>
-        </header>
-        <p> ${news.description} </p>
-        <p> ${news.url} </p>       
-   </div> `)
-  );
+function searchQueryString() {
+  const base = `${BASE_URL}/v1/search?${KEY}`;
+  const body = [...$("#search select")]
+    .map(function (element) {
+      return `${$(element).attr("name")}=${$(element).val()}}`;
+    })
+    .join("&");
+  const keyWords = `keyword=${$("#keywords").val()}`;
+  const url = encodeURI(`${base}&${body}&${keyWords}`);
+  return url;
 }
-function renderArticlesList(articleList) {
-  $(".results").empty();
-  articleList.forEach(function (article) {
-    $(".results").append(renderArticles(article));
-  });
-}
+
+$("#search").on("submit", async function (event) {
+  event.preventDefault();
+  try {
+    const response = await fetch(searchQueryString);
+    const { news } = await response.json();
+    console.log(news);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// function renderArticles(news) {
+//   return $(".results").append(
+//     $(` <div class="result-card">
+//         <header>
+//             <h2>${news.title}</h2>
+//             <h3>${news.author}</h3>
+//             <p> ${news.published}</p>
+//         </header>
+//         <p> ${news.description} </p>
+//         <p> ${news.url} </p>
+//    </div> `)
+//   );
+// }
+// function renderArticlesList(articleList) {
+// $("#news-app section.active").removeClass("active");
+//   $(".results").empty();
+//   articleList.forEach(function (article) {
+//     $(".results").append(renderArticles(article));
+//   });
+// }
 
 function clear() {
   localStorage.clear();
