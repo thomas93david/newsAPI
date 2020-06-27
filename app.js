@@ -1,20 +1,18 @@
 const BASE_URL = "https://api.currentsapi.services";
 const KEY = "apiKey=7JTqW9vfS6zyFzGR2zZosTWgtlsblwzFHMT6HP8DB5OeL5AN";
 
-async function fetchNewsArticles() {
-  const url = `${BASE_URL}/v1/latest-news?${KEY}`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    // console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
+let search = "/v1/search";
+let language = "/v1/available/languages";
+let region = "/v1/available/regions";
+let category = "/v1/available/categories";
+
+//builds the new query string
+function newsQueryString() {
+  let url = `${BASE_URL}${search}${language}${region}${category}${KEY}`;
+  console.log(url);
+  return url;
 }
-
-fetchNewsArticles();
-
+//fetches all categories
 async function fetchAllCategories() {
   const url = `${BASE_URL}/v1/available/categories?${KEY}`;
   if (localStorage.getItem("categories")) {
@@ -22,15 +20,16 @@ async function fetchAllCategories() {
   }
   try {
     const response = await fetch(url);
-    const { news } = await response.json();
-    localStorage.setItem("categories", JSON.stringify(news));
-    return news;
+    const { categories } = await response.json();
+    localStorage.setItem("categories", JSON.stringify(categories));
+    return categories;
   } catch (error) {
     console.error(error);
   }
 }
 // fetchAllCategories();
 
+//fetches all languages
 async function fetchAllLanguages() {
   const url = `${BASE_URL}/v1/available/languages?${KEY}`;
   if (localStorage.getItem("languages")) {
@@ -38,15 +37,16 @@ async function fetchAllLanguages() {
   }
   try {
     const response = await fetch(url);
-    const { news } = await response.json();
-    localStorage.setItem("languages", JSON.stringify(news));
-    return news;
+    const { languages } = await response.json();
+    localStorage.setItem("languages", JSON.stringify(languages));
+    return languages;
   } catch (error) {
     console.error(error);
   }
 }
 // fetchAllLanguages();
 
+//fetches all regions
 async function fetchAllRegions() {
   const url = `${BASE_URL}/v1/available/regions?${KEY}`;
   if (localStorage.getItem("regions")) {
@@ -54,9 +54,9 @@ async function fetchAllRegions() {
   }
   try {
     const response = await fetch(url);
-    const { news } = await response.json();
-    localStorage.setItem("regions", JSON.stringify(news));
-    return news;
+    const { regions } = await response.json();
+    localStorage.setItem("regions", JSON.stringify(regions));
+    return regions;
   } catch (error) {
     console.error(error);
   }
@@ -101,27 +101,40 @@ async function preFetchRestrictions() {
 
 preFetchRestrictions();
 
-function searchQueryString() {
-  const base = `${BASE_URL}/v1/search?${KEY}`;
-  const body = [...$("#search select")]
-    .map(function (element) {
-      return `${$(element).attr("name")}=${$(element).val()}}`;
-    })
-    .join("&");
-  const keyWords = `keyword=${$("#keywords").val()}`;
-  const url = encodeURI(`${base}&${body}&${keyWords}`);
-  return url;
-}
+// $("#search").on("submit", async function (event) {
+//   event.preventDefault();
+//   try {
+//     const response = await fetch(newsQueryString());
+//     const { news } = await response.json();
+//     console.log(news);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
 
-$("#search").on("submit", async function (event) {
+$("#keywords").on("change", function () {
   event.preventDefault();
-  try {
-    const response = await fetch(searchQueryString);
-    const { news } = await response.json();
-    console.log(news);
-  } catch (error) {
-    console.error(error);
-  }
+  let keys = $("#keywords").val();
+  search = `keyword=${keys}&`;
+  newsQueryString();
+});
+
+$("#select-language").on("change", function () {
+  let lang = $("#select-language").val();
+  language = `language=${lang}&`;
+  newsQueryString();
+});
+
+$("#select-region").on("change", function () {
+  let reg = $("#select-region").val();
+  region = `region=${reg}&`;
+  newsQueryString();
+});
+
+$("#select-categories").on("change", function () {
+  let cat = $("#select-categories").val();
+  category = `category=${cat}&`;
+  newsQueryString();
 });
 
 // function renderArticles(news) {
@@ -144,6 +157,20 @@ $("#search").on("submit", async function (event) {
 //     $(".results").append(renderArticles(article));
 //   });
 // }
+
+// async function fetchNewsArticles() {
+//   const url = `${BASE_URL}/v1/latest-news?${KEY}`;
+//   try {
+//     const response = await fetch(url);
+//     const data = await response.json();
+
+//     return data;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// fetchNewsArticles().then((x) => console.log(x));
 
 function clear() {
   localStorage.clear();
