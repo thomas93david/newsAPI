@@ -27,27 +27,18 @@ fieldset {
   height: 200px;
   z-index: 1;
 }
-.next-previous {
+.results h2,
+p {
+  text-align: center;
+}
+.results .pagination {
+  text-align: center;
+}
+
+.results .articles {
   display: flex;
-  justify-content: flex-end;
-  padding: 9px;
-  height: 75px;
-  background: #86ee60;
-}
-.next-previous button:disabled {
-  margin: 10px;
-  background: lightskyblue;
-}
-
-#news-app .results {
-  border: 3px solid red;
-  margin: 9px;
-
-  height: 750px;
-  width: 100%;
-}
-
-#news-app .results .result-card {
-  width: 100px;
-  height: 100px;
+  margin: auto;
+  width: 95%;
+  height: auto;
+  background-color: pink;
 }
